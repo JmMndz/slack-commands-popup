@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Slack Commands</title>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50; /* Green */
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3e8e41; /* Darker green */
+    }
+  </style>
+  </style>
+</head>
+<body>
+  <h1>Available Slack Commands</h1>
+  <div class="button-container" id="commands-container">
+    </div>
+
+  <script>
+    // Function to copy command to clipboard and show a message
+    function copyCommand(commandText) {
+      navigator.clipboard.writeText(commandText)
+        .then(() => {
+          alert(`Command "${commandText}" copied to clipboard! Paste it into the Slack input box.`);
+        })
+        .catch(err => {
+          console.error("Failed to copy: ", err);
+        });
+    }
+
+    // Function to create buttons dynamically
+    function createButtons(commands) {
+      const container = document.getElementById('commands-container');
+
+      for (const command in commands) {
+        const button = document.createElement('button');
+        button.innerText = commands[command]; // Use the command label from the dictionary
+        button.onclick = () => copyCommand(command); // Copy the full command
+        container.appendChild(button);
+      }
+    }
+
+    // Get commands data from Flask app
+    fetch('/get_commands')
+      .then(response => response.json())
+      .then(commands => {
+        createButtons(commands);
+      })
+      .catch(error => {
+        console.error("Error fetching commands:", error);
+      });
+  </script>
+</body>
+</html>
