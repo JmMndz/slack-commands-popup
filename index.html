@@ -1,70 +1,96 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Slack Commands</title>
   <style>
     body {
       font-family: sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      margin: 20px 0;
+      color: #333;
     }
     .button-container {
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin-top: 20px;
     }
     button {
-      margin: 5px;
-      padding: 10px 20px;
+      margin: 10px;
+      padding: 12px 24px;
       border: none;
       border-radius: 5px;
-      background-color: #4CAF50; /* Green */
+      background-color: #4CAF50;
       color: white;
-      font-size: 16px;
+      font-size: 18px;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
     button:hover {
-      background-color: #3e8e41; /* Darker green */
+      background-color: #3e8e41;
     }
-  </style>
   </style>
 </head>
 <body>
   <h1>Available Slack Commands</h1>
-  <div class="button-container" id="commands-container">
-    </div>
+  <div class="button-container" id="commands-container"></div>
 
   <script>
-    // Function to copy command to clipboard and show a message
+    // Function to copy a command to the clipboard
     function copyCommand(commandText) {
       navigator.clipboard.writeText(commandText)
         .then(() => {
           alert(`Command "${commandText}" copied to clipboard! Paste it into the Slack input box.`);
         })
         .catch(err => {
-          console.error("Failed to copy: ", err);
+          console.error("Failed to copy:", err);
         });
     }
 
-    // Function to create buttons dynamically
+    // Function to create buttons for the commands dynamically
     function createButtons(commands) {
       const container = document.getElementById('commands-container');
+      container.innerHTML = ''; // Clear previous buttons (if any)
 
+      // Loop through the commands object and create buttons
       for (const command in commands) {
         const button = document.createElement('button');
-        button.innerText = commands[command]; // Use the command label from the dictionary
-        button.onclick = () => copyCommand(command); // Copy the full command
+        button.innerText = commands[command]; // Use the command label
+        button.onclick = () => copyCommand(command); // Set click handler
         container.appendChild(button);
       }
     }
 
-    // Get commands data from Flask app
-    fetch('/get_commands')
-      .then(response => response.json())
-      .then(commands => {
-        createButtons(commands);
-      })
-      .catch(error => {
-        console.error("Error fetching commands:", error);
-      });
+    // Helper function to get a query parameter value from the URL
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    // Get the channel_id from the query parameter
+    const channelId = getQueryParam('channel_id');
+
+    if (!channelId) {
+      alert("Channel ID is missing. Please try again.");
+    } else {
+      // Fetch commands from the backend using the dynamic channel_id
+      fetch(`https://83ndm04z-81.usw3.devtunnels.ms/get_commands?channel_id=${channelId}`)
+        .then(response => response.json())
+        .then(commands => {
+          createButtons(commands); // Create buttons with the fetched commands
+        })
+        .catch(error => {
+          console.error("Error fetching commands:", error);
+          alert("Failed to load commands. Please try again later.");
+        });
+    }
   </script>
 </body>
 </html>
