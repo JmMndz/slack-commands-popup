@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Available Professors</title>
+  <title>All Professors Commands</title>
   <style>
     body {
       font-family: sans-serif;
@@ -17,8 +17,8 @@
       color: #555050;
     }
     h2 {
-        margin: 10px 0;
-        color: #a15132; /* Slightly lighter shade of the button color */
+      margin: 10px 0;
+      color: #a15132; 
     }
     .button-container {
       display: flex;
@@ -41,16 +41,20 @@
     button:hover {
       background-color: #272927; 
     }
+    .command-list {
+      margin-left: 20px; /* Indent the command list */
+      color: #888; /* Grey text for commands */
+      text-align: left;
+    }
   </style>
 </head>
 <body>
-  <h1>Available Professors</h1>
+  <h1>All Professors Commands</h1>
   <div class="button-container" id="commands-container"></div>
 
   <script>
-    // Function to copy a command to the clipboard
     function copyCommand(commandText) {
-      navigator.clipboard.writeText(commandText)
+      navigator.clipboard.writeText(`bot ${commandText}`) // Add "bot " prefix
         .then(() => {
           alert(`Command copied to clipboard! Paste it into the Slack input box.`);
         })
@@ -59,30 +63,29 @@
         });
     }
 
-    // Function to create buttons for the commands dynamically
-    function createButtons(commands) {
+    function createProfessorButton(professor, commands) {
       const container = document.getElementById('commands-container');
+      const button = document.createElement('button');
+      button.innerText = professor;
+      button.onclick = () => copyCommand(professor); 
+      container.appendChild(button);
 
-      // Loop through the commands object and create buttons
+      // Create a list of commands (not buttons)
+      const commandList = document.createElement('ul');
+      commandList.classList.add('command-list');
       for (const command in commands) {
-        const button = document.createElement('button');
-        button.innerText = commands[command]; // Use the command label
-        button.onclick = () => copyCommand(command); // Set click handler
-        container.appendChild(button);
+        const listItem = document.createElement('li');
+        listItem.textContent = `${command}: ${commands[command]}`;
+        commandList.appendChild(listItem);
       }
+      container.appendChild(commandList); 
     }
 
-    // Fetch commands for all professors
     fetch(`https://83ndm04z-81.usw3.devtunnels.ms/get_all_professors_commands`)
       .then(response => response.json())
       .then(allCommands => {
-        // Create buttons for each professor
         for (const professor in allCommands) {
-          const professorCommands = allCommands[professor];
-          const professorTitle = document.createElement('h2');
-          professorTitle.textContent = professor;
-          document.getElementById('commands-container').appendChild(professorTitle);
-          createButtons(professorCommands); // Create buttons for this professor's commands
+          createProfessorButton(professor, allCommands[professor]);
         }
       })
       .catch(error => {
