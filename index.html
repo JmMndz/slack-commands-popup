@@ -45,31 +45,34 @@
   <div class="button-container" id="commands-container"></div>
 
   <script>
-    // Function to get query parameters from the URL
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
-    }
+// Function to get query parameters from the URL
+function getQueryParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
 
-    // Function to format 'prof <name>' to 'Professor <name>'
-    function formatDirName(dirName) {
-      if (dirName && dirName.startsWith('prof ')) {
-        return `Professor ${dirName.substring(5)}`; // Remove 'prof ' and replace with 'Professor'
-      }
-      return dirName; // Return original if no match
-    }
+// Function to format 'prof <name>' to 'Professor <name>'
+function formatDirName(dirName) {
+  console.log("Raw dirName:", dirName); // Debug: log raw dirName
+  if (dirName && dirName.startsWith('prof ')) {
+    const formatted = `Professor ${dirName.substring(5)}`; // Remove 'prof ' and replace with 'Professor'
+    console.log("Formatted dirName:", formatted); // Debug: log formatted name
+    return formatted;
+  }
+  return dirName || "Unknown"; // Default if no match
+}
 
-    // Extract 'dir_name' from URL and format it
-    const dirName = getQueryParam('dir_name');
-    const formattedName = formatDirName(dirName);
+// Extract 'dir_name' from URL and format it
+const dirName = getQueryParam('dir_name');
+const formattedName = formatDirName(dirName);
 
-    // Update page title and header dynamically
-    if (formattedName) {
-      document.title = `${formattedName} Commands`; // Update <title>
-      document.getElementById('header-title').textContent = `${formattedName} Commands`; // Update <h1>
-    } else {
-      document.getElementById('header-title').textContent = "Commands"; // Default fallback
-    }
+// Update page title and header dynamically
+if (formattedName) {
+  document.title = `${formattedName} Commands`; // Update <title>
+  document.getElementById('header-title').textContent = `${formattedName} Commands`; // Update <h1>
+} else {
+  document.getElementById('header-title').textContent = "Commands"; // Default fallback
+}
 
     // Function to copy a command to the clipboard
     function copyCommand(commandText) {
