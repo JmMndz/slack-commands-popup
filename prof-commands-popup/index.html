@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Professors Commands</title>
+  <style>
+    /* ... (Your existing CSS styles) */
+  </style>
+</head>
+<body>
+  <h1>All Professors Commands</h1>
+  <div class="button-container" id="commands-container"></div>
+
+  <script>
+    // ... (Your existing copyCommand and createButtons functions)
+
+    // Fetch commands for all professors
+    fetch(`https://83ndm04z-81.usw3.devtunnels.ms/get_all_professors_commands`)
+      .then(response => response.json())
+      .then(allCommands => {
+        // Create buttons for each professor
+        for (const professor in allCommands) {
+          const professorCommands = allCommands[professor];
+          const professorTitle = document.createElement('h2');
+          professorTitle.textContent = professor;
+          document.getElementById('commands-container').appendChild(professorTitle);
+          createButtons(professorCommands); // Create buttons for this professor's commands
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching commands:", error);
+        alert("Failed to load commands. Please try again later.");
+      });
+  </script>
+</body>
+</html>
