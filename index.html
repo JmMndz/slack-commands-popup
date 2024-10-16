@@ -40,7 +40,8 @@
   </style>
 </head>
 <body>
-  <h1 id="header-title">Professor Commands</h1>
+  <!-- The title will be populated dynamically -->
+  <h1 id="header-title"></h1>  
   <div class="button-container" id="commands-container"></div>
 
   <script>
@@ -53,19 +54,21 @@
     // Function to format 'prof <name>' to 'Professor <name>'
     function formatDirName(dirName) {
       if (dirName && dirName.startsWith('prof ')) {
-        return `Professor ${dirName.substring(5)}`; // Replace 'prof ' with 'Professor '
+        return `Professor ${dirName.substring(5)}`; // Remove 'prof ' and replace with 'Professor'
       }
       return dirName; // Return original if no match
     }
 
-    // Dynamically update the title and header based on 'dir_name'
+    // Extract 'dir_name' from URL and format it
     const dirName = getQueryParam('dir_name');
     const formattedName = formatDirName(dirName);
 
-    // Ensure the header and page title are updated
+    // Update page title and header dynamically
     if (formattedName) {
-      document.title = `${formattedName} Commands`; // Update the page title
-      document.getElementById('header-title').textContent = `${formattedName} Commands`; // Update the header text
+      document.title = `${formattedName} Commands`; // Update <title>
+      document.getElementById('header-title').textContent = `${formattedName} Commands`; // Update <h1>
+    } else {
+      document.getElementById('header-title').textContent = "Commands"; // Default fallback
     }
 
     // Function to copy a command to the clipboard
