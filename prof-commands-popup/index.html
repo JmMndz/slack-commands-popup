@@ -3,17 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All Professors Commands</title>
+  <title>Available Professors</title>
   <style>
-    /* ... (Your existing CSS styles) */
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #000000;
+    }
+    h1 {
+      margin: 20px 0;
+      color: #555050;
+    }
+    h2 {
+        margin: 10px 0;
+        color: #a15132; /* Slightly lighter shade of the button color */
+    }
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+    button {
+      width: 200px;
+      margin: 10px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      background-color: #272927;
+      color: rgb(161, 81, 50);
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #272927; 
+    }
   </style>
 </head>
 <body>
-  <h1>All Professors Commands</h1>
+  <h1>Available Professors</h1>
   <div class="button-container" id="commands-container"></div>
 
   <script>
-    // ... (Your existing copyCommand and createButtons functions)
+    // Function to copy a command to the clipboard
+    function copyCommand(commandText) {
+      navigator.clipboard.writeText(commandText)
+        .then(() => {
+          alert(`Command copied to clipboard! Paste it into the Slack input box.`);
+        })
+        .catch(err => {
+          console.error("Failed to copy:", err);
+        });
+    }
+
+    // Function to create buttons for the commands dynamically
+    function createButtons(commands) {
+      const container = document.getElementById('commands-container');
+
+      // Loop through the commands object and create buttons
+      for (const command in commands) {
+        const button = document.createElement('button');
+        button.innerText = commands[command]; // Use the command label
+        button.onclick = () => copyCommand(command); // Set click handler
+        container.appendChild(button);
+      }
+    }
 
     // Fetch commands for all professors
     fetch(`https://83ndm04z-81.usw3.devtunnels.ms/get_all_professors_commands`)
