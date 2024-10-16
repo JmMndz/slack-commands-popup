@@ -40,8 +40,7 @@
   </style>
 </head>
 <body>
-  <h1>Professor Commands</h1>
-  <div class="button-container" id="commands-container"></div>
+  <h1 id="title">Professor Commands</h1> <div class="button-container" id="commands-container"></div>
 
   <script>
     // Function to copy a command to the clipboard
@@ -84,8 +83,12 @@
       // Fetch commands from the backend using the dynamic channel_id
       fetch(`https://83ndm04z-81.usw3.devtunnels.ms/get_commands?channel_id=${channelId}`)
         .then(response => response.json())
-        .then(commands => {
-          createButtons(commands); // Create buttons with the fetched commands
+        .then(data => {
+          createButtons(data.commands); // Create buttons
+
+          // Set the title using professor's name
+          const titleElement = document.getElementById('title');
+          titleElement.textContent = `Professor ${data.professor_name} Commands`; 
         })
         .catch(error => {
           console.error("Error fetching commands:", error);
