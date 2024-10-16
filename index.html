@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="page-title">Slack Commands</title>
+  <title>Slack Commands</title>
   <style>
     body {
       font-family: sans-serif;
@@ -40,57 +40,46 @@
   </style>
 </head>
 <body>
-  <!-- The title will be populated dynamically -->
-  <h1 id="header-title"></h1>  
+  <h1 id="header-title">Loading...</h1>
   <div class="button-container" id="commands-container"></div>
 
   <script>
-// Function to get query parameters from the URL
-function getQueryParam(param) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(param);
-}
+    // Helper function to get a query parameter value from the URL
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
 
-// Function to format 'prof <name>' to 'Professor <name>'
-function formatDirName(dirName) {
-  console.log("Raw dirName:", dirName); // Debug: log raw dirName
-  if (dirName && dirName.startsWith('prof ')) {
-    const formatted = `Professor ${dirName.substring(5)}`; // Remove 'prof ' and replace with 'Professor'
-    console.log("Formatted dirName:", formatted); // Debug: log formatted name
-    return formatted;
-  }
-  return dirName || "Unknown"; // Default if no match
-}
+    // Function to format the directory name for display
+    function formatDirName(dirName) {
+      const formattedName = dirName
+        .replace(/prof /i, "Professor ") // Capitalize 'Professor'
+        .replace(/_/g, " ") // Replace underscores with spaces
+        .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize each word
+      return formattedName;
+    }
 
-// Extract 'dir_name' from URL and format it
-const dirName = getQueryParam('dir_name');
-const formattedName = formatDirName(dirName);
-
-// Update page title and header dynamically
-if (formattedName) {
-  document.title = `${formattedName} Commands`; // Update <title>
-  document.getElementById('header-title').textContent = `${formattedName} Commands`; // Update <h1>
-} else {
-  document.getElementById('header-title').textContent = "Commands"; // Default fallback
-}
+    // Set the title dynamically based on dir_name
+    const dirName = getQueryParam('dir_name') || "Unknown";
+    const formattedName = formatDirName(dirName);
+    document.getElementById('header-title').textContent = `${formattedName} Commands`;
 
     // Function to copy a command to the clipboard
     function copyCommand(commandText) {
       navigator.clipboard.writeText(commandText)
         .then(() => {
-          alert(`Command copied to clipboard! Paste it into the Slack input box.`);
+          alert("Command copied to clipboard! Paste it into the Slack input box.");
         })
         .catch(err => {
           console.error("Failed to copy:", err);
         });
     }
 
-    // Function to create buttons for commands dynamically
+    // Function to create buttons for the commands dynamically
     function createButtons(commands) {
       const container = document.getElementById('commands-container');
       container.innerHTML = ''; // Clear previous buttons (if any)
 
-      // Loop through the commands object and create buttons
       for (const command in commands) {
         const button = document.createElement('button');
         button.innerText = commands[command]; // Use the command label
@@ -99,12 +88,13 @@ if (formattedName) {
       }
     }
 
-    // Fetch the channel ID from the query parameters
+    // Get the channel_id from the query parameter
     const channelId = getQueryParam('channel_id');
+
     if (!channelId) {
       alert("Channel ID is missing. Please try again.");
     } else {
-      // Fetch the commands from the backend based on channel_id
+      // Fetch commands from the backend using the dynamic channel_id
       fetch(`https://83ndm04z-81.usw3.devtunnels.ms/get_commands?channel_id=${channelId}`)
         .then(response => response.json())
         .then(commands => {
